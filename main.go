@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"productlist/repo/productrepo"
 )
 
 var temp = template.Must(template.ParseGlob("templates/*.html"))
@@ -27,5 +28,8 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	temp.ExecuteTemplate(w, "Index", nil)
+
+	products := productrepo.GetAll()
+
+	temp.ExecuteTemplate(w, "Index", products)
 }

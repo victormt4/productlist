@@ -11,10 +11,32 @@
               integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
               crossorigin="anonymous">
 
-        <title>Hello, world!</title>
+        <title>Product list</title>
     </head>
     <body>
-    <h1>Hello, world!</h1>
+    <h1>Product list</h1>
+    <main>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .}}
+                <tr>
+                    <td>{{.Name}}</td>
+                    <td>{{.Description}}</td>
+                    <td>{{.Price}}</td>
+                    <td>{{.Quantity}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </main>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
             integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
             crossorigin="anonymous"></script>
