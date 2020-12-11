@@ -2,15 +2,19 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"html/template"
 	"net/http"
-	"os"
 	"productlist/repo/productrepo"
+	"productlist/utils/errorutils"
 )
 
 var temp = template.Must(template.ParseGlob("templates/*.html"))
 
 func main() {
+
+	err := godotenv.Load(".env")
+	errorutils.ExitOnError(err)
 
 	http.HandleFunc("/", index)
 
@@ -18,13 +22,8 @@ func main() {
 
 	fmt.Println("Listening on", addr)
 
-	err := http.ListenAndServe(addr, nil)
-
-	if err != nil {
-		fmt.Println("Error on starting server")
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	err = http.ListenAndServe(addr, nil)
+	errorutils.ExitOnError(err)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
