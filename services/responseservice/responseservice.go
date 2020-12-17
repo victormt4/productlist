@@ -36,6 +36,12 @@ func (r ResponseWriter) SendNotAllowed(data interface{}) {
 	})
 }
 
+func (r ResponseWriter) SendServerError(data interface{}) {
+	JsonResponseWithConfig(r.writer, data, ResponseConfig{
+		HttpStatusCode: 500,
+	})
+}
+
 func JsonResponseWithConfig(w http.ResponseWriter, data interface{}, config ResponseConfig) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(config.HttpStatusCode)
