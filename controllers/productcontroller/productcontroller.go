@@ -67,11 +67,15 @@ func Remove(w http.ResponseWriter, r *http.Request) {
 
 	res := responseservice.GetResponseServiceWriter(w)
 
-	if r.Method == "DELETE" {
+	if r.Method != "DELETE" {
+		res.SendNotAllowed(nil)
+	} else {
 
 		id, err := strconv.ParseInt(r.FormValue("id"), 10, 64)
 
-		if err == nil {
+		if err != nil {
+			res.SendUnprocessableEntity("id is invalid")
+		} else {
 
 			db := dbwrapper.GetDB()
 			defer db.Close()
@@ -80,20 +84,12 @@ func Remove(w http.ResponseWriter, r *http.Request) {
 
 			product := repo.Find(id)
 
-			if product != nil {
-
+			if product == nil {
+				res.SendNotFound("Product not found")
+			} else {
 				repo.Remove(id)
 				res.SendSuccess("Product removed")
-
-			} else {
-				res.SendNotFound("Product not found")
 			}
-
-		} else {
-			res.SendUnprocessableEntity("id is invalid")
 		}
-
-	} else {
-		res.SendNotAllowed(nil)
 	}
 }
