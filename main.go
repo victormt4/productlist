@@ -13,12 +13,14 @@ func main() {
 	err := godotenv.Load(".env")
 	errorutils.ExitOnError(err)
 
-	routes.RegisterRoutes()
+	mux := http.NewServeMux()
+
+	routes.RegisterRoutes(mux)
 
 	addr := "localhost:9000"
 
 	fmt.Println("Listening on", addr)
 
-	err = http.ListenAndServe(addr, nil)
+	err = http.ListenAndServe(addr, mux)
 	errorutils.ExitOnError(err)
 }
