@@ -53,6 +53,7 @@ func JsonResponse(w http.ResponseWriter, data interface{}) {
 	json.NewEncoder(w).Encode(data)
 }
 
+//GetResponseServiceWriter wrap a http.ResponseWriter in a service with methods to print json responses
 func GetResponseServiceWriter(w http.ResponseWriter) ResponseWriter {
 	return ResponseWriter{
 		writer: w,
