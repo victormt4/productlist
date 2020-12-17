@@ -1,19 +1,17 @@
 package errorutils
 
 import (
-	"fmt"
-	"os"
+	"log"
 )
 
 func PanicOnError(err error) {
 	if err != nil {
-		panic(err.Error())
+		log.Panic(err)
 	}
 }
 
 func ExitOnError(err error) {
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
