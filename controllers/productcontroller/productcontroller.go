@@ -3,6 +3,7 @@ package productcontroller
 import (
 	"html/template"
 	"net/http"
+	"productlist/dbwrapper"
 	"productlist/model"
 	"productlist/repo/productrepo"
 	"productlist/services/responseservice"
@@ -13,7 +14,12 @@ var temp = template.Must(template.ParseGlob("templates/*.html"))
 
 func Index(w http.ResponseWriter, r *http.Request) {
 
-	products := productrepo.GetAll()
+	db := dbwrapper.GetDB()
+	defer db.Close()
+
+	repo := productrepo.GetRepo(db)
+
+	products := repo.GetAll()
 
 	temp.ExecuteTemplate(w, "Index", products)
 }
@@ -36,7 +42,12 @@ func Add(w http.ResponseWriter, r *http.Request) {
 			quantity = 0
 		}
 
-		product := productrepo.Insert(model.Product{
+		db := dbwrapper.GetDB()
+		defer db.Close()
+
+		repo := productrepo.GetRepo(db)
+
+		product := repo.Insert(model.Product{
 			Name:        name,
 			Description: description,
 			Price:       price,

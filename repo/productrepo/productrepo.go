@@ -1,20 +1,31 @@
 package productrepo
 
 import (
-	"log"
-	"productlist/db"
+	"database/sql"
 	"productlist/model"
 	"productlist/utils/errorutils"
 )
 
-func GetAll() []model.Product {
+type Repo interface {
+	GetAll() []model.Product
+	Insert(product model.Product) model.Product
+}
 
-	conn := db.GetConnection()
-	defer conn.Close()
+type ProductRepo struct {
+	db *sql.DB
+}
+
+func GetRepo(db *sql.DB) Repo {
+	return ProductRepo{db: db}
+}
+
+func (r ProductRepo) GetAll() []model.Product {
+
+	db := r.db
 
 	products := make([]model.Product, 0)
 
-	rows, err := conn.Query("SELECT * FROM produtos")
+	rows, err := db.Query("SELECT * FROM produtos")
 
 	errorutils.PanicOnError(err)
 
@@ -41,15 +52,12 @@ func GetAll() []model.Product {
 	return products
 }
 
-func Insert(product model.Product) model.Product {
+func (r ProductRepo) Insert(product model.Product) model.Product {
 
-	conn := db.GetConnection()
-	defer conn.Close()
+	db := r.db
 
-	statement, err := conn.Prepare("INSERT INTO produtos (nome, descricao, preco, quantidade) VALUES ($1, $2, $3, $4) RETURNING id")
-	if err != nil {
-		log.Panic(err)
-	}
+	statement, err := db.Prepare("INSERT INTO produtos (nome, descricao, preco, quantidade) VALUES ($1, $2, $3, $4) RETURNING id")
+	errorutils.PanicOnError(err)
 	defer statement.Close()
 
 	var productId int64
