@@ -18,6 +18,12 @@ type ResponseWriter struct {
 	writer http.ResponseWriter
 }
 
+type Service interface {
+	SendSuccess(data interface{})
+	SendNotAllowed(data interface{})
+	SendServerError(data interface{})
+}
+
 func (r ResponseWriter) SendSuccess(data interface{}) {
 	JsonResponse(r.writer, data)
 }
@@ -54,7 +60,7 @@ func JsonResponse(w http.ResponseWriter, data interface{}) {
 }
 
 //GetResponseServiceWriter wrap a http.ResponseWriter in a service with methods to print json responses
-func GetResponseServiceWriter(w http.ResponseWriter) ResponseWriter {
+func GetResponseServiceWriter(w http.ResponseWriter) Service {
 	return ResponseWriter{
 		writer: w,
 	}
