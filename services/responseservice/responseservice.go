@@ -22,20 +22,29 @@ type Service interface {
 	SendSuccess(data interface{})
 	SendNotAllowed(data interface{})
 	SendServerError(data interface{})
+	SendUnprocessableEntity(data interface{})
+	SendNotFound(data interface{})
 }
 
 func (r ResponseWriter) SendSuccess(data interface{}) {
+
+	data = formatData(data, "Success")
+
 	JsonResponse(r.writer, data)
+}
+
+func (r ResponseWriter) SendNotFound(data interface{}) {
+
+	data = formatData(data, "Not found")
+
+	JsonResponseWithConfig(r.writer, data, ResponseConfig{
+		HttpStatusCode: 404,
+	})
 }
 
 func (r ResponseWriter) SendNotAllowed(data interface{}) {
 
-	if data == nil {
-		data = DefaultResponseStructure{
-			Message: "Method not allowed",
-			Data:    nil,
-		}
-	}
+	data = formatData(data, "Method not allowed")
 
 	JsonResponseWithConfig(r.writer, data, ResponseConfig{
 		HttpStatusCode: 403,
@@ -43,9 +52,36 @@ func (r ResponseWriter) SendNotAllowed(data interface{}) {
 }
 
 func (r ResponseWriter) SendServerError(data interface{}) {
+
+	data = formatData(data, "Server error")
+
 	JsonResponseWithConfig(r.writer, data, ResponseConfig{
 		HttpStatusCode: 500,
 	})
+}
+
+func (r ResponseWriter) SendUnprocessableEntity(data interface{}) {
+
+	data = formatData(data, "Unprocessable Entity")
+
+	JsonResponseWithConfig(r.writer, data, ResponseConfig{
+		HttpStatusCode: 422,
+	})
+}
+
+func formatData(t interface{}, defaultMessage string) interface{} {
+	switch i := t.(type) {
+	case nil:
+		data := make(map[string]string)
+		data["Message"] = defaultMessage
+		return data
+	case string:
+		data := make(map[string]string)
+		data["Message"] = i
+		return data
+	default:
+		return t
+	}
 }
 
 func JsonResponseWithConfig(w http.ResponseWriter, data interface{}, config ResponseConfig) {
