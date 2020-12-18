@@ -1,7 +1,6 @@
 package productcontroller
 
 import (
-	"html/template"
 	"net/http"
 	"productlist/dbwrapper"
 	"productlist/model"
@@ -10,9 +9,7 @@ import (
 	"strconv"
 )
 
-var temp = template.Must(template.ParseGlob("templates/*.html"))
-
-func Index(w http.ResponseWriter, r *http.Request) {
+func Index(r *http.Request) responseservice.Response {
 
 	db := dbwrapper.GetDB()
 	defer db.Close()
@@ -21,12 +18,13 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	products := repo.GetAll()
 
-	temp.ExecuteTemplate(w, "Index", products)
+	return responseservice.Success(responseservice.TemplateResponse{
+		TemplateName: "Index",
+		TemplateData: products,
+	})
 }
 
-func Add(w http.ResponseWriter, r *http.Request) {
-
-	resService := responseservice.GetResponseServiceWriter(w)
+func Add(r *http.Request) responseservice.Response {
 
 	if r.Method == "POST" {
 		name := r.FormValue("name")
@@ -54,27 +52,25 @@ func Add(w http.ResponseWriter, r *http.Request) {
 			Quantity:    quantity,
 		})
 
-		resService.SendSuccess(responseservice.DefaultResponseStructure{
+		return responseservice.Success(responseservice.DefaultResponseStructure{
 			Message: "Product successfully registered", Data: product,
 		})
 
 	} else {
-		resService.SendNotAllowed(nil)
+		return responseservice.NotAllowed(nil)
 	}
 }
 
-func Remove(w http.ResponseWriter, r *http.Request) {
-
-	res := responseservice.GetResponseServiceWriter(w)
+func Remove(r *http.Request) responseservice.Response {
 
 	if r.Method != "DELETE" {
-		res.SendNotAllowed(nil)
+		return responseservice.NotAllowed(nil)
 	} else {
 
 		id, err := strconv.ParseInt(r.FormValue("id"), 10, 64)
 
 		if err != nil {
-			res.SendUnprocessableEntity("id is invalid")
+			return responseservice.UnprocessableEntity("id is invalid")
 		} else {
 
 			db := dbwrapper.GetDB()
@@ -85,10 +81,10 @@ func Remove(w http.ResponseWriter, r *http.Request) {
 			product := repo.Find(id)
 
 			if product == nil {
-				res.SendNotFound("Product not found")
+				return responseservice.NotFound("Product not found")
 			} else {
 				repo.Remove(id)
-				res.SendSuccess("Product removed")
+				return responseservice.Success("Product removed")
 			}
 		}
 	}
