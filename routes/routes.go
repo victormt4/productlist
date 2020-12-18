@@ -18,7 +18,7 @@ func RegisterRoutes(mux *http.ServeMux) {
 	mux.Handle("/remove", globalHandler(productcontroller.Remove))
 }
 
-func globalHandler(f func(r *http.Request) responseservice.Response) http.HandlerFunc {
+func globalHandler(f func(r *http.Request) responseservice.ResponseFormatter) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 
 		defer func() {

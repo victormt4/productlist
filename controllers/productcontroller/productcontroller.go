@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func Index(r *http.Request) responseservice.Response {
+func Index(r *http.Request) responseservice.ResponseFormatter {
 
 	db := dbwrapper.GetDB()
 	defer db.Close()
@@ -24,7 +24,7 @@ func Index(r *http.Request) responseservice.Response {
 	})
 }
 
-func Add(r *http.Request) responseservice.Response {
+func Add(r *http.Request) responseservice.ResponseFormatter {
 
 	if r.Method == "POST" {
 		name := r.FormValue("name")
@@ -61,7 +61,7 @@ func Add(r *http.Request) responseservice.Response {
 	}
 }
 
-func Remove(r *http.Request) responseservice.Response {
+func Remove(r *http.Request) responseservice.ResponseFormatter {
 
 	if r.Method != "DELETE" {
 		return responseservice.NotAllowed(nil)

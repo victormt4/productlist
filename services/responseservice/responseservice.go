@@ -14,7 +14,7 @@ type ResponseConfig struct {
 	HttpStatusCode int
 }
 
-type Response interface {
+type ResponseFormatter interface {
 	GetData() interface{}
 	GetConfig() ResponseConfig
 }
@@ -32,7 +32,7 @@ func (r response) GetConfig() ResponseConfig {
 	return r.config
 }
 
-func Success(data interface{}) Response {
+func Success(data interface{}) ResponseFormatter {
 
 	data = formatData(data, "Success")
 
@@ -42,7 +42,7 @@ func Success(data interface{}) Response {
 	}
 }
 
-func NotFound(data interface{}) Response {
+func NotFound(data interface{}) ResponseFormatter {
 
 	data = formatData(data, "Not found")
 
@@ -52,7 +52,7 @@ func NotFound(data interface{}) Response {
 	}
 }
 
-func NotAllowed(data interface{}) Response {
+func NotAllowed(data interface{}) ResponseFormatter {
 
 	data = formatData(data, "Method not allowed")
 
@@ -62,7 +62,7 @@ func NotAllowed(data interface{}) Response {
 	}
 }
 
-func ServerError(data interface{}) Response {
+func ServerError(data interface{}) ResponseFormatter {
 
 	data = formatData(data, "Server error")
 
@@ -72,7 +72,7 @@ func ServerError(data interface{}) Response {
 	}
 }
 
-func UnprocessableEntity(data interface{}) Response {
+func UnprocessableEntity(data interface{}) ResponseFormatter {
 
 	data = formatData(data, "Unprocessable Entity")
 
