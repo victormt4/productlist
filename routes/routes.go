@@ -37,7 +37,7 @@ func globalHandler(f func(r *http.Request) responseservice.ResponseFormatter) ht
 				}
 
 				errorRes := responseservice.ServerError(err.Error())
-				writer.Header().Set("Content-Type", "application/jsonresponseservice")
+				writer.Header().Set("Content-Type", "application/json")
 				writer.WriteHeader(errorRes.GetConfig().HttpStatusCode)
 				json.NewEncoder(writer).Encode(errorRes.GetData())
 
@@ -50,7 +50,7 @@ func globalHandler(f func(r *http.Request) responseservice.ResponseFormatter) ht
 		case responseservice.TemplateResponse:
 			temp.ExecuteTemplate(writer, resModel.TemplateName, resModel.TemplateData)
 		default:
-			writer.Header().Set("Content-Type", "application/jsonresponseservice")
+			writer.Header().Set("Content-Type", "application/json")
 			writer.WriteHeader(res.GetConfig().HttpStatusCode)
 			json.NewEncoder(writer).Encode(resModel)
 		}
